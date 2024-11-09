@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Marketing Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .feature-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-preview {
+            margin-top: 10px;
+            display: none;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+
+        .file-upload-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+        }
+
+        .file-upload-preview audio {
+            width: 100%;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+
+        .remove-file {
+            color: #dc3545;
+            cursor: pointer;
+        }
+
+        .custom-file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .custom-file-upload:hover {
+            border-color: #0d6efd;
+            background: #f8f9fa;
+        }
+
+        .custom-file-upload i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #6c757d;
+        }
+
+        .navbar {
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            background: #212529 !important;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .brand-text {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            margin: 0 0.2rem;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .nav-link i {
+            margin-right: 0.5rem;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+        }
+
+        .nav-link:hover i {
+            transform: scale(1.2);
+            color: #fff;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .navbar-nav .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Active state for navigation items */
+        .nav-link.active {
+            color: #fff !important;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .navbar-nav {
+                padding: 1rem 0;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 0;
+            }
+            
+            .navbar-nav .btn {
+                margin: 0.5rem 0;
+            }
+        }
+
+        /* Scroll behavior */
+        .navbar-scrolled {
+            background: rgba(33, 37, 41, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 0;
+        }
+
+        /* Add styles for the mobile menu button */
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .message {
+            max-width: 80%;
+            margin-bottom: 15px;
+        }
+
+        .user-message {
+            margin-left: auto;
+        }
+
+        .ai-message {
+            margin-right: auto;
+        }
+
+        .message-content {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 15px;
+        }
+
+        .user-message .message-content {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .ai-message .message-content {
+            background-color: #f8f9fa;
+            color: #212529;
+            border: 1px solid #dee2e6;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #90949c;
+            border-radius: 50%;
+            animation: bounce 1.5s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-4px);
+            }
+        }
+
+        #emailTabs .nav-link {
+            color: black !important;
+        }
+
+        #emailTabs .nav-link.active {
+            color: black !important;
+        }
+
+        .video-header {
+            position: relative;
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .header-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translateX(-50%) translateY(-50%);
+            z-index: 0;
+            object-fit: cover;
+        }
+
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+        }
+
+        .header-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-content p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video header first -->
+    <div class="video-header">
+        <video autoplay muted loop playsinline class="header-video">
+            <source src="/Users/jonahgrossman/Desktop/111859-692674371_small.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1>Prophacy Records</h1>
+            <p>Elevate Your Music Marketing</p>
+        </div>
+    </div>
+
+    <!-- Then the navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <span class="brand-text">Prophacy Records</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#social">
+                            <i class="fas fa-share-alt"></i>
+                            Social Media
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#engagement">
+                            <i class="fas fa-users"></i>
+                            Fan Engagement
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#promotion">
+                            <i class="fas fa-bullhorn"></i>
+                            Promotion
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#music-analytics">
+                            <i class="fas fa-music"></i>
+                            Music Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ai-assistant">
+                            <i class="fas fa-user-tie"></i>
+                            Marketing Assistant
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                    <a class="nav-link btn btn-primary ms-2" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">
+                        <i class="fas fa-user-plus"></i>
+                        Sign Up
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sign Up Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sign Up for Prophacy Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="signupForm">
+                        <div class="mb-3">
+                            <label class="form-label">Email address</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" checked disabled>
+                            <label class="form-check-label">Subscribe to Prophacy Records newsletter</label>
+                            <small class="form-text text-muted d-block">By signing up, you'll receive updates about new releases, events, and exclusive content.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to Prophacy Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Email address</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Media Management -->
+    <section id="social" class="py-5">
+        <div class="container">
+            <h2>Social Media Management</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Create Post</h4>
+                        <div class="mb-4">
+                            <h6>Connected Platforms</h6>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary d-flex align-items-center justify-content-between platform-connect" data-platform="instagram">
+                                    <span><i class="fab fa-instagram me-2"></i>Connect Instagram</span>
+                                    <i class="fas fa-plug"></i>
+                                </button>
+                                <button class="btn btn-outline-dark d-flex align-items-center justify-content-between platform-connect" data-platform="tiktok">
+                                    <span><i class="fab fa-tiktok me-2"></i>Connect TikTok</span>
+                                    <i class="fas fa-plug"></i>
+                                </button>
+                                <button class="btn btn-outline-primary d-flex align-items-center justify-content-between platform-connect" data-platform="facebook">
+                                    <span><i class="fab fa-facebook me-2"></i>Connect Facebook</span>
+                                    <i class="fas fa-plug"></i>
+                                </button>
+                                <button class="btn btn-outline-danger d-flex align-items-center justify-content-between platform-connect" data-platform="youtube">
+                                    <span><i class="fab fa-youtube me-2"></i>Connect YouTube</span>
+                                    <i class="fas fa-plug"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <form id="socialPostForm">
+                            <select class="form-select mb-3" id="platformSelect" disabled>
+                                <option value="">Connect a platform first</option>
+                                <option value="instagram" disabled>Instagram</option>
+                                <option value="tiktok" disabled>TikTok</option>
+                                <option value="youtube" disabled>YouTube Shorts</option>
+                                <option value="facebook" disabled>Facebook</option>
+                            </select>
+                            <textarea class="form-control mb-3" placeholder="Post content..."></textarea>
+                            <div class="mb-3">
+                                <label class="form-label">Upload Media</label>
+                                <input type="file" class="form-control mb-2" accept="video/*,image/*">
+                                <small class="text-muted">Supported formats: MP4, MOV (max 60 seconds for Shorts/TikTok)</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Thumbnail (for YouTube)</label>
+                                <input type="file" class="form-control" accept="image/*">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tags</label>
+                                <input type="text" class="form-control" placeholder="Add tags separated by commas">
+                            </div>
+                            <button class="btn btn-primary">Schedule Post</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Scheduled Posts</h4>
+                        <div id="scheduledPosts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fan Engagement -->
+    <section id="engagement" class="py-5 bg-light">
+        <div class="container">
+            <h2>Fan Engagement</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Email Campaign</h4>
+                        <ul class="nav nav-tabs mb-3" id="emailTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="campaign-tab" data-bs-toggle="tab" data-bs-target="#campaign" type="button" role="tab" style="color: black;">Create Campaign</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="subscribers-tab" data-bs-toggle="tab" data-bs-target="#subscribers" type="button" role="tab" style="color: black;">Manage Subscribers</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="emailTabContent">
+                            <!-- Campaign Creation Tab -->
+                            <div class="tab-pane fade show active" id="campaign" role="tabpanel">
+                                <form id="campaignForm">
+                                    <input type="text" class="form-control mb-3" placeholder="Campaign Name">
+                                    <input type="text" class="form-control mb-3" placeholder="Email Subject">
+                                    <textarea class="form-control mb-3" rows="4" placeholder="Email content..."></textarea>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <span class="me-2">Selected Recipients:</span>
+                                            <span class="badge bg-primary" id="recipientCount">0</span>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Send Campaign</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Subscriber Management Tab -->
+                            <div class="tab-pane fade" id="subscribers" role="tabpanel">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <input type="email" class="form-control" id="newSubscriber" placeholder="Enter email address">
+                                        <button class="btn btn-primary" id="addSubscriber">Add</button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" id="csvUpload" accept=".csv">
+                                        <button class="btn btn-outline-primary" id="importCsv">Import CSV</button>
+                                    </div>
+                                    <small class="text-muted">Upload CSV file with email addresses</small>
+                                </div>
+                                <div class="subscriber-list" style="max-height: 200px; overflow-y: auto;">
+                                    <div class="list-group" id="subscribersList">
+                                        <!-- Subscriber entries will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Fan Feedback</h4>
+                        <div id="fanFeedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Playlist & Influencer Section -->
+    <section id="promotion" class="py-5">
+        <div class="container">
+            <h2>Promotion Management</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Playlist Submission</h4>
+                        <form>
+                            <select class="form-control mb-3">
+                                <option>Select Track</option>
+                            </select>
+                            <select class="form-control mb-3">
+                                <option>Select Playlist Category</option>
+                            </select>
+                            <button class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Influencer Outreach</h4>
+                        <div id="influencerList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Music Analytics Integration -->
+    <section id="music-analytics" class="py-5">
+        <div class="container">
+            <h2>Music Analytics Integration</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Connect Your Platforms</h4>
+                        <div class="d-grid gap-3">
+                            <button class="btn btn-outline-success d-flex align-items-center justify-content-between">
+                                <span><i class="fab fa-spotify me-2"></i>Connect Spotify</span>
+                                <i class="fas fa-plug"></i>
+                            </button>
+                            <button class="btn btn-outline-dark d-flex align-items-center justify-content-between">
+                                <span><i class="fab fa-apple me-2"></i>Connect Apple Music</span>
+                                <i class="fas fa-plug"></i>
+                            </button>
+                            <button class="btn btn-outline-primary d-flex align-items-center justify-content-between">
+                                <span><i class="fab fa-amazon me-2"></i>Connect Amazon Music</span>
+                                <i class="fas fa-plug"></i>
+                            </button>
+                            <button class="btn btn-outline-info d-flex align-items-center justify-content-between">
+                                <span><i class="fas fa-music me-2"></i>Connect Tidal</span>
+                                <i class="fas fa-plug"></i>
+                            </button>
+                            <button class="btn btn-outline-danger d-flex align-items-center justify-content-between">
+                                <span><i class="fab fa-youtube me-2"></i>Connect YouTube</span>
+                                <i class="fas fa-plug"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h4>Consolidated Analytics</h4>
+                        <div class="mb-4">
+                            <canvas id="streamingChart"></canvas>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center mb-3">
+                                    <h5>Total Streams</h5>
+                                    <h3 id="totalStreams">0</h3>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center mb-3">
+                                    <h5>Monthly Listeners</h5>
+                                    <h3 id="monthlyListeners">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="feature-card">
+                        <h4><i class="fas fa-chart-line me-2"></i>Virality Predictor</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form id="viralityForm" class="mb-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Your Track</label>
+                                        <div class="custom-file-upload" id="viralityUploadZone">
+                                            <i class="fas fa-music"></i>
+                                            <p>Drag and drop your track or click to browse</p>
+                                            <input type="file" class="form-control" id="viralityUpload" accept="audio/*" style="display: none;">
+                                        </div>
+                                        <div id="viralityPreview" class="file-upload-preview">
+                                            <audio controls style="width: 100%; display: none;"></audio>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Genre</label>
+                                        <select class="form-select" required>
+                                            <option value="">Select genre</option>
+                                            <option>Pop</option>
+                                            <option>Hip Hop</option>
+                                            <option>R&B</option>
+                                            <option>Rock</option>
+                                            <option>Electronic</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Analyze Track</button>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="viralityResults" style="display: none;">
+                                    <h5 class="mb-4">Virality Analysis</h5>
+                                    <div class="mb-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span>Viral Potential Score</span>
+                                            <span class="badge bg-primary" id="viralScore">0%</span>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6>Key Factors</h6>
+                                        <ul class="list-group" id="keyFactors">
+                                        </ul>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6>Recommendations</h6>
+                                        <div class="alert alert-info" id="recommendations">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marketing Assistant Section -->
+    <section id="ai-assistant" class="py-5 bg-light">
+        <div class="container">
+            <h2>Marketing Assistant</h2>
+            <div class="row mt-4">
+                <div class="col-md-8 mx-auto">
+                    <div class="feature-card">
+                        <div class="chat-container" style="height: 400px; overflow-y: auto; margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 8px;">
+                            <div id="chat-messages">
+                                <!-- Messages will be inserted here -->
+                                <div class="message ai-message mb-3">
+                                    <div class="message-content p-3 bg-primary text-white rounded">
+                                        Hello! I'm your AI marketing assistant. Ask me anything about content creation, video ideas, or marketing strategies for your music!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form id="chat-form" class="d-flex gap-2">
+                            <input type="text" id="user-input" class="form-control" placeholder="Ask about video ideas, marketing strategies, etc...">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>&copy; 2024 Prophacy Records. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Here you would typically:
+        // 1. Get the form data
+        // 2. Send it to your backend
+        // 3. Create the user account
+        // 4. Add the email to your mailing list
+        // 5. Redirect to the dashboard
+        
+        alert('Account created! You have been subscribed to the Prophacy Records newsletter.');
+        
+        // Close the modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+        modal.hide();
+    });
+
+    // Add FontAwesome for icons
+    document.head.innerHTML += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">';
+
+    // Handle music uploads
+    document.getElementById('musicUploadZone').addEventListener('click', () => {
+        document.getElementById('musicUpload').click();
+    });
+
+    document.getElementById('musicUpload').addEventListener('change', function(e) {
+        const preview = document.getElementById('musicPreview');
+        const fileList = preview.querySelector('.file-list');
+        fileList.innerHTML = '';
+        preview.style.display = 'block';
+
+        [...this.files].forEach(file => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${file.name}</span>
+                <span class="remove-file"><i class="fas fa-times"></i></span>
+            `;
+            if (file.type.startsWith('audio/')) {
+                const audio = document.createElement('audio');
+                audio.src = URL.createObjectURL(file);
+                audio.controls = true;
+                li.insertBefore(audio, li.lastChild);
+            }
+            fileList.appendChild(li);
+        });
+    });
+
+    // Handle photo upload
+    document.getElementById('photoUploadZone').addEventListener('click', () => {
+        document.getElementById('photoUpload').click();
+    });
+
+    document.getElementById('photoUpload').addEventListener('change', function(e) {
+        const preview = document.getElementById('photoPreview');
+        const img = preview.querySelector('img');
+        
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                img.style.display = 'block';
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Add drag and drop functionality
+    ['musicUploadZone', 'photoUploadZone'].forEach(id => {
+        const zone = document.getElementById(id);
+        
+        zone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zone.style.borderColor = '#0d6efd';
+            zone.style.background = '#f8f9fa';
+        });
+
+        zone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            zone.style.borderColor = '#ddd';
+            zone.style.background = 'transparent';
+        });
+
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.style.borderColor = '#ddd';
+            zone.style.background = 'transparent';
+            
+            const input = document.getElementById(id === 'musicUploadZone' ? 'musicUpload' : 'photoUpload');
+            input.files = e.dataTransfer.files;
+            input.dispatchEvent(new Event('change'));
+        });
+    });
+
+    // Add this script to enable smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (this.getAttribute('data-bs-toggle') === 'modal') return; // Skip for modal toggles
+            
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Add FontAwesome if not already included
+    if (!document.querySelector('link[href*="font-awesome"]')) {
+        document.head.innerHTML += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">';
+    }
+
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (this.getAttribute('data-bs-toggle') === 'modal') return;
+            
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Active state handling
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (pageYOffset >= (sectionTop - sectionHeight/3)) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+        
+        // Add scrolled class to navbar
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('navbar-scrolled');
+        } else {
+            navbar.classList.remove('navbar-scrolled');
+        }
+    });
+
+    // Optional: Add hover sound effect
+    const navItems = document.querySelectorAll('.nav-link');
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            // You can add a subtle hover sound here if desired
+            // const hoverSound = new Audio('path/to/hover-sound.mp3');
+            // hoverSound.play();
+        });
+    });
+
+    // Initialize streaming chart
+    const ctx = document.getElementById('streamingChart').getContext('2d');
+    const streamingChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Monthly Streams',
+                data: [0, 0, 0, 0, 0, 0],
+                borderColor: '#0d6efd',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Streaming Performance'
+                }
+            }
+        }
+    });
+
+    // Add click handlers for platform connections
+    document.querySelectorAll('#music-analytics button').forEach(button => {
+        button.addEventListener('click', function() {
+            // Here you would typically:
+            // 1. Open OAuth flow for the selected platform
+            // 2. Handle authentication
+            // 3. Store access tokens
+            // 4. Fetch analytics data
+            alert('Connecting to platform... (OAuth flow would start here)');
+        });
+    });
+
+    // Replace the existing chat JavaScript with this simpler version
+    const chatForm = document.getElementById('chat-form');
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput = document.getElementById('user-input');
+
+    const responses = {
+        'video': 'Here are some video content ideas:\n1. Behind-the-scenes studio sessions\n2. Short music teasers\n3. Day-in-the-life vlogs\n4. Tutorial videos\n5. Fan interaction Q&As',
+        'marketing': 'Some marketing strategies you could try:\n1. Collaborate with other artists\n2. Run targeted social media ads\n3. Create email marketing campaigns\n4. Engage with fans in comments\n5. Host virtual events',
+        'content': 'Popular content types for musicians:\n1. Live performance clips\n2. Music production tips\n3. Instrument tutorials\n4. Cover songs\n5. Music theory explanations',
+        'strategy': 'Key marketing strategies:\n1. Build an email list\n2. Engage on social media\n3. Create consistent content\n4. Collaborate with others\n5. Analyze your metrics'
+    };
+
+    function addMessage(message, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'} mb-3`;
+        messageDiv.innerHTML = `
+            <div class="message-content p-3 ${isUser ? 'bg-primary' : 'bg-light'} ${isUser ? 'text-white' : 'text-dark'} rounded">
+                ${message}
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function getAIResponse(input) {
+        input = input.toLowerCase();
+        let response = "I'm not sure about that. Try asking about video ideas, marketing strategies, or content creation!";
+        
+        for (let key in responses) {
+            if (input.includes(key)) {
+                response = responses[key];
+                break;
+            }
+        }
+        return response;
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (message) {
+            addMessage(message, true);
+            setTimeout(() => {
+                addMessage(getAIResponse(message), false);
+            }, 500);
+            userInput.value = '';
+        }
+    });
+
+    // Virality Predictor functionality
+    document.getElementById('viralityUploadZone').addEventListener('click', () => {
+        document.getElementById('viralityUpload').click();
+    });
+
+    document.getElementById('viralityUpload').addEventListener('change', function(e) {
+        const preview = document.getElementById('viralityPreview');
+        const audio = preview.querySelector('audio');
+        
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            audio.src = URL.createObjectURL(file);
+            audio.style.display = 'block';
+            preview.style.display = 'block';
+        }
+    });
+
+    document.getElementById('viralityForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        submitBtn.disabled = true;
+
+        // Simulate AI analysis with random scores and delayed response
+        setTimeout(() => {
+            const viralScore = Math.floor(Math.random() * 41) + 60; // Random score between 60-100
+            const results = document.getElementById('viralityResults');
+            const progressBar = results.querySelector('.progress-bar');
+            const scoreElement = document.getElementById('viralScore');
+            const factorsList = document.getElementById('keyFactors');
+            const recommendations = document.getElementById('recommendations');
+
+            // Update score and progress bar
+            scoreElement.textContent = `${viralScore}%`;
+            progressBar.style.width = `${viralScore}%`;
+
+            // Generate factors based on score
+            const factors = [
+                { text: 'Hook Catchiness', score: Math.floor(Math.random() * 100) },
+                { text: 'Production Quality', score: Math.floor(Math.random() * 100) },
+                { text: 'Genre Trend Alignment', score: Math.floor(Math.random() * 100) },
+                { text: 'Dance Potential', score: Math.floor(Math.random() * 100) }
+            ];
+
+            // Update factors list
+            factorsList.innerHTML = factors.map(factor => `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${factor.text}
+                    <span class="badge bg-${factor.score > 70 ? 'success' : 'warning'}">${factor.score}%</span>
+                </li>
+            `).join('');
+
+            // Generate recommendations
+            recommendations.innerHTML = `
+                <p><strong>To increase viral potential:</strong></p>
+                <ul class="mb-0">
+                    <li>Create short, catchy snippets for TikTok</li>
+                    <li>Focus on the hook section for social media</li>
+                    <li>Consider collaborating with trending artists</li>
+                    <li>Develop a dance challenge for the track</li>
+                </ul>
+            `;
+
+            // Show results
+            results.style.display = 'block';
+
+            // Reset button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }, 2000);
+    });
+
+    // Add drag and drop functionality for virality upload
+    const viralityZone = document.getElementById('viralityUploadZone');
+
+    viralityZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        viralityZone.style.borderColor = '#0d6efd';
+        viralityZone.style.background = '#f8f9fa';
+    });
+
+    viralityZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        viralityZone.style.borderColor = '#ddd';
+        viralityZone.style.background = 'transparent';
+    });
+
+    viralityZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        viralityZone.style.borderColor = '#ddd';
+        viralityZone.style.background = 'transparent';
+        
+        const input = document.getElementById('viralityUpload');
+        input.files = e.dataTransfer.files;
+        input.dispatchEvent(new Event('change'));
+    });
+
+    // Email Campaign Management
+    document.addEventListener('DOMContentLoaded', function() {
+        const subscribers = new Set();
+        const subscribersList = document.getElementById('subscribersList');
+        const recipientCount = document.getElementById('recipientCount');
+
+        // Add single subscriber
+        document.getElementById('addSubscriber').addEventListener('click', function() {
+            const emailInput = document.getElementById('newSubscriber');
+            const email = emailInput.value.trim();
+            
+            if (email && isValidEmail(email)) {
+                addSubscriber(email);
+                emailInput.value = '';
+            } else {
+                alert('Please enter a valid email address');
+            }
+        });
+
+        // Import CSV
+        document.getElementById('importCsv').addEventListener('click', function() {
+            const fileInput = document.getElementById('csvUpload');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const text = e.target.result;
+                    const emails = text.split(/[\n,]/).map(email => email.trim());
+                    
+                    emails.forEach(email => {
+                        if (isValidEmail(email)) {
+                            addSubscriber(email);
+                        }
+                    });
+                };
+                reader.readAsText(file);
+                fileInput.value = '';
+            }
+        });
+
+        // Handle campaign submission
+        document.getElementById('campaignForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (subscribers.size === 0) {
+                alert('Please add recipients to your campaign');
+                return;
+            }
+            alert(`Campaign would be sent to ${subscribers.size} recipients`);
+        });
+
+        function addSubscriber(email) {
+            if (subscribers.has(email)) {
+                alert('This email is already in the list');
+                return;
+            }
+
+            subscribers.add(email);
+            updateSubscribersList();
+            updateRecipientCount();
+        }
+
+        function removeSubscriber(email) {
+            subscribers.delete(email);
+            updateSubscribersList();
+            updateRecipientCount();
+        }
+
+        function updateSubscribersList() {
+            subscribersList.innerHTML = '';
+            subscribers.forEach(email => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item d-flex justify-content-between align-items-center';
+                item.innerHTML = `
+                    ${email}
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.list-group-item').remove(); removeSubscriber('${email}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                subscribersList.appendChild(item);
+            });
+        }
+
+        function updateRecipientCount() {
+            recipientCount.textContent = subscribers.size;
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+    });
+    </script>
+</body>
+</html>
